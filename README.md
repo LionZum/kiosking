@@ -31,7 +31,7 @@ To get started:
 
 ## Usage
 
-Modify the `Instalation` section to meet your needs.
+Modify the `Installation` section to meet your needs.
 
 ### Quick Start
 
@@ -41,3 +41,4 @@ Modify the existing `Add-Shell` and `Set-CustomActions` to meet your needs. Add 
 
 - Review the [Keyboard filters](https://learn.microsoft.com/en-us/windows/iot/iot-enterprise/customize/predefined-key-combinations) starting at line 177
 - Consider blocking or using [scancodes](https://www.lookuptables.com/coding/keyboard-scan-codes) as well
+- NOTE: ctrl+alt+del is not disabled by default. plan to mitigate task manager as appropriate. 
