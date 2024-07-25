@@ -541,40 +541,62 @@ function Clear-Shells() {
         }
 }
 
-function Add-Shell($UserGroup, $Shell) {
-    <#
-    .Synopsis
-        Add a shell
-    .Description
-        Adds a new user or group entry with a shell.  If the account already exists,
-        the shell executable is updated.
-    .Example
-        Add-Shell "localUser" "c:\windows\system32\cmd.exe"
-        Add-Shell "localGroup" "c:\windows\system32\cmd.exe"
-        Add-Shell "domain\user" "c:\windows\system32\cmd.exe"
-    #>
+function Add-Shell {
+    param(
+        [Parameter(Position=0, Mandatory=$true)]
+        [string]$UserGroup,
+        [Parameter(Position=1, Mandatory=$true)]
+        [string]$ShellPath,
+        [Parameter()]
+        [string]$ReturnCode,
+        [Parameter()]
+        [string]$ReturnAction,
+        [Parameter(Position=2)]
+        [string]$DefaultAction = "restart_shell"
+    )
+    $restart_shell = 0
+    $restart_device = 1
+    $shutdown_device = 2
+    $do_nothing = 3
 
-    $objUser = New-Object System.Security.Principal.NTAccount($UserGroup)
-    $stringSID = $objUser.Translate([System.Security.Principal.SecurityIdentifier])
+    switch ($DefaultAction) {
+        "restart_shell" { $defaultActionNumber = $restart_shell }
+        "restart_device" { $defaultActionNumber = $restart_device }
+        "shutdown_device" { $defaultActionNumber = $shutdown_device }
+        "do_nothing" { $defaultActionNumber = $do_nothing }
+        default { $defaultActionNumber = 0 }
+    }
 
-    $custom = Get-WMIObject -class WESL_UserSetting @CommonArgs |
-        where {
-            $_.Sid -eq "$stringSID"
-        };
+    $COMPUTER = "localhost"
+    $NAMESPACE = "root\standardcimv2\embedded"
+    $ShellLauncherClass = [wmiclass]"\\$COMPUTER\${NAMESPACE}:WESL_UserSetting"
+    $UserSID = Get-UsernameSID($UserGroup)
 
-    if ($custom) {
-        # Entry exists.  Just update it.
-        $custom.Shell = $Shell;
-        $custom.Put() | Out-Null;
-        Write-Host "Updated shell $UserGroup ($stringSID) to $shell.";
+    # Check if custom shell already exists for the user
+    try {
+        $customShell = $ShellLauncherClass.GetCustomShell($UserSID)
+    } catch {
+        Write-Host "No existing shell for $UserGroup ($UserSID)."
+    }
+    if ($customShell) {
+        # Custom shell exists, try to remove it first
+        try {
+            $ShellLauncherClass.RemoveCustomShell($UserSID)
+            Write-Host "Removed existing custom shell for $UserGroup ($UserSID)."
+        } catch {
+            Write-Host "Failed to remove existing custom shell for $UserGroup ($UserSID). Error: $_"
+            return
+        }
+    }
 
-    } else {
-        Set-WMIInstance -class WESL_UserSetting -argument @{Sid="$stringSID";Shell="$Shell"} @CommonArgs | Out-Null
-        
-        Write-Host "Added shell $UserGroup ($stringSID) to $shell.";
+    # Attempt to set the new custom shell
+    try {
+        $ShellLauncherClass.SetCustomShell($UserSID, $ShellPath, $ReturnCode, $ReturnAction, $defaultActionNumber)
+        Write-Host "Set new custom shell for $UserGroup ($UserSID) to $ShellPath."
+    } catch {
+        Write-Host "Failed to set custom shell for $UserGroup ($UserSID). Error: $_"
     }
 }
-
 function Set-CustomActions($UserGroup, $returnCodes, $actions) {
     <#
     .Synopsis
