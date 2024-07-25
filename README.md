@@ -38,6 +38,8 @@ Modify the `Installation` section to meet your needs. This is a starting point f
 
 Modify the existing `Add-Shell` and `Set-CustomActions` to meet your needs. Add a domain or local group and an application to launch.
 
+***Note: I found issues with the clear-shells function. Do Not use at this time***
+
 ### Fine Tune Setting
 
 - Review the [Keyboard filters](https://learn.microsoft.com/en-us/windows/iot/iot-enterprise/customize/predefined-key-combinations) starting at line 177 in `Deploy-Applications.ps1`
