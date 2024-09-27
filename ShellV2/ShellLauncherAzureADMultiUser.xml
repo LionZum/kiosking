@@ -1,0 +1,31 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ShellLauncherConfiguration xmlns="http://schemas.microsoft.com/ShellLauncher/2018/Configuration"
+xmlns:v2="http://schemas.microsoft.com/ShellLauncher/2019/Configuration">
+  <Profiles>
+    <DefaultProfile>
+      <Shell Shell="%systemroot%\explorer.exe">
+        <DefaultAction Action="RestartShell"/>
+      </Shell>
+    </DefaultProfile>
+    <Profile Id="{de308d18-b6d7-4a83-a6ea-0ca643c12e6f}">
+      <Shell Shell="Microsoft.WindowsCalculator_8wekyb3d8bbwe!App" v2:AppType="UWP" v2:AllAppsFullScreen="true">
+        <DefaultAction Action="RestartShell"/>
+      </Shell>
+    </Profile>
+    <Profile Id="{1a67d3cb-ede9-4258-a37c-99deab3b4076}">
+      <Shell Shell="%ProgramFiles(x86)%\\Microsoft\Edge\Application\msedge.exe" v2:AllAppsFullScreen="false">
+        <DefaultAction Action="RestartShell"/>
+      </Shell>
+    </Profile>
+  </Profiles>
+  <Configs>
+    <Config>
+      <UserGroup Type="AzureActiveDirectoryGroup" Name="dfe77c78-ea18-40e6-9ec8-33b1a0399277" />
+      <DefaultProfile Id="{1a67d3cb-ede9-4258-a37c-99deab3b4076}"/>
+    </Config>
+    <Config>
+      <UserGroup Type="AzureActiveDirectoryGroup" Name="680b467e-fd69-4a38-bcb5-852a800da510" />
+      <DefaultProfile Id="{de308d18-b6d7-4a83-a6ea-0ca643c12e6f}"/>
+    </Config>
+  </Configs>
+</ShellLauncherConfiguration>
